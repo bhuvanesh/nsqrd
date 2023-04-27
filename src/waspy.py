@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO],  meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=1.0'}])
 server = app.server
-px.set_mapbox_access_token(open(".mapbox_token").read())
+
 #---------------------------------------------------------------
 #DF DATA LOAD SECTION
 
@@ -57,16 +57,7 @@ tab2 = dbc.Tab([
 
     ], label="Peak Detection", style={'padding':'15px'})
 tab3 = dbc.Tab([
-    dbc.Row([dbc.RadioItems(
-            options=[
-                {"label": "hourly", "value": 1},
-                {"label": "daily", "value": 2},
-                {"label": "weekly", "value": 3},
-            ],
-            value=1,
-            id="temporal_inp",
-            inline=True,
-        ),]),
+    dbc.Row([]),
     dcc.Graph(id='chart-3')], label='Features', style={'padding':'15px'})
 #tab3 = dbc.Tab([table], label="Table", className="p-4")
 tabs = dbc.Card(dbc.Tabs([tab1, tab2, tab3]))

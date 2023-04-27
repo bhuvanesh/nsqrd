@@ -44,11 +44,32 @@ controls = dbc.Card(
     body=True,
 )
 # tab1 = dbc.Tab([dcc.Graph(id="chart-1")], label="Top Interactions", style={'padding':'15px'})
+table_df = dbc.Row([
+            dbc.Col(dash_table.DataTable(
+                data=meta_df.to_dict('records'),
+                columns=[{'id': c, 'name': c} for c in meta_df.columns],
+                sort_action='native',
+                page_size=15,
+                style_as_list_view=True,
+                css=[{'selector': 'table', 'rule': 'table-layout: fixed'}],
+                style_header={
+                'backgroundColor': 'gray',
+                'fontWeight': 'bold'
+                    },
+                style_cell={
+                    'width': '{}%'.format(len(meta_df.columns)),
+                    'textOverflow': 'ellipsis',
+                    'overflow': 'hidden',
+                    # 'backgroundColor': 'lightgray',
+                    }
+                ))
+                ], style={'margin':'3px'})
 tab1 = dbc.Tab([
     dbc.Row([ dcc.Graph(id="ecg") ]),
     dbc.Row([ dcc.Graph(id="ecg_filter") ]),
     dbc.Row([ dcc.Graph(id="ppg") ]),
     dbc.Row([ dcc.Graph(id="ppg_filter") ]),  
+    dbc.Row([ table_df]),  
     ], label="Noise Filtering", style={'padding':'15px'})
 tab2 = dbc.Tab([
     dbc.Row([ dcc.Graph(id="ecg_peak") ]),
@@ -60,6 +81,7 @@ tab2 = dbc.Tab([
          dbc.Col([dcc.Graph(id="ppgs_sd")], width=4),
 
          ]),
+     dbc.Row([ dcc.Graph(id="rhr_ecg") ],  style={'margin':'5px'}),
 
     ], label="Peak Detection", style={'padding':'15px'})
 tab3 = dbc.Tab([
@@ -87,6 +109,8 @@ leftCard = dbc.Row([
         dcc.Graph(id="ppg_nfig", ), ],style={ 'height':100, 'width':'fit-content'}),
     
 ], style={'padding-top':5})
+
+
 
 # leftCard = dcc.Graph(id="ecg_wfig", )
 
@@ -201,6 +225,7 @@ app.layout = dbc.Container(
     Output("ecg_sd", "figure"),
     Output("ppgf_sd", "figure"),
     Output("ppgs_sd", "figure"),
+    Output("rhr_ecg", "figure"),
     
 
     Input("indicator", "value"),
@@ -334,7 +359,12 @@ def update_page(indicator):
     ppgs_sd = px.histogram(peakmeta_df, x="PPG_SS_SD", nbins=25)
     ppgs_sd.update_traces(marker_line_width=1,marker_line_color="white")
 
-    return ecg, ecg_filter, ppg, ppg_filter, ecg_wfig, ecg_nfig, ppg_wfig, ppg_nfig, ecg_peak, ppg_peak, sigqual_fig, df_rowdata, ecg_sd, ppgf_sd, ppgs_sd
+    rhr_ecg = px.line(x=peakmeta_df['USER_ID'], y=peakmeta_df['RHR']-peakmeta_df['ECG_HR'])
+    rhr_ecg.update_xaxes(visible=False)
+    rhr_ecg.update_layout(title=dict(text="RHR vs ECG HR",),title_x=0.5,autosize=True, paper_bgcolor='whitesmoke',
+                         showlegend=False,xaxis_title='DIFFERENCE',yaxis_title='VALUE DIFFERENCE')
+
+    return ecg, ecg_filter, ppg, ppg_filter, ecg_wfig, ecg_nfig, ppg_wfig, ppg_nfig, ecg_peak, ppg_peak, sigqual_fig, df_rowdata, ecg_sd, ppgf_sd, ppgs_sd,rhr_ecg
 #---------------------------------------------------------------
     
 

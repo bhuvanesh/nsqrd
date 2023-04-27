@@ -54,6 +54,12 @@ tab2 = dbc.Tab([
     dbc.Row([ dcc.Graph(id="ecg_peak") ]),
     dbc.Row([ dcc.Graph(id="ppg_peak") ]),
     dbc.Row([ dbc.Row([], ) ], id='df_rowdata', style={'margin':'5px'}),
+    dbc.Row([
+         dbc.Col([dcc.Graph(id="ecg_sd")], width=4),
+         dbc.Col([dcc.Graph(id="ppgf_sd")], width=4),
+         dbc.Col([dcc.Graph(id="ppgs_sd")], width=4),
+
+         ]),
 
     ], label="Peak Detection", style={'padding':'15px'})
 tab3 = dbc.Tab([
@@ -192,6 +198,10 @@ app.layout = dbc.Container(
     Output("ppg_peak", "figure"),
     Output("sigqual_fig", "figure"),
     Output("df_rowdata", "children"),
+    Output("ecg_sd", "figure"),
+    Output("ppgf_sd", "figure"),
+    Output("ppgs_sd", "figure"),
+    
 
     Input("indicator", "value"),
 )
@@ -317,9 +327,16 @@ def update_page(indicator):
                                           size='md',
                                           color='secondary')
 
-    return ecg, ecg_filter, ppg, ppg_filter, ecg_wfig, ecg_nfig, ppg_wfig, ppg_nfig, ecg_peak, ppg_peak, sigqual_fig, df_rowdata
-#---------------------------------------------------------------
+    ecg_sd = px.histogram(peakmeta_df, x="ECG_RR_SD", nbins=25)
+    ecg_sd.update_traces(marker_line_width=1,marker_line_color="white")
+    ppgf_sd = px.histogram(peakmeta_df, x="PPG_FF_SD", nbins=25)
+    ppgf_sd.update_traces(marker_line_width=1,marker_line_color="white")
+    ppgs_sd = px.histogram(peakmeta_df, x="PPG_SS_SD", nbins=25)
+    ppgs_sd.update_traces(marker_line_width=1,marker_line_color="white")
 
+    return ecg, ecg_filter, ppg, ppg_filter, ecg_wfig, ecg_nfig, ppg_wfig, ppg_nfig, ecg_peak, ppg_peak, sigqual_fig, df_rowdata, ecg_sd, ppgf_sd, ppgs_sd
+#---------------------------------------------------------------
+    
 
 
 if __name__ == '__main__':

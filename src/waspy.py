@@ -3,8 +3,6 @@ import plotly.express as px  # (version 4.7.0 or higher)
 from dash import Dash, dcc, html, Input, Output, dash_table,callback  # pip install dash (version 2.0.0 or higher)
 import dash_bootstrap_components as dbc
 import numpy as np
-from helpers.utilx import get_user_metrics as gum
-from helpers.utilx import normalise_radar_user as nru
 import plotly.graph_objects as go
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO],  meta_tags=[{'name': 'viewport',

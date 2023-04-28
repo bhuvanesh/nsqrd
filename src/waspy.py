@@ -415,10 +415,13 @@ def update_page(indicator):
 
     ecg_sd = px.histogram(peakmeta_df, x="ECG_RR_SD", nbins=25)
     ecg_sd.update_traces(marker_line_width=1,marker_line_color="white")
+    ecg_sd.update_layout(title=dict(text="Std. Dev. Of ECG R-R INTERVALS",))
     ppgf_sd = px.histogram(peakmeta_df, x="PPG_FF_SD", nbins=25)
     ppgf_sd.update_traces(marker_line_width=1,marker_line_color="white")
+    ppgf_sd.update_layout(title=dict(text="Std. Dev. Of PPG F-F INTERVALS",))
     ppgs_sd = px.histogram(peakmeta_df, x="PPG_SS_SD", nbins=25)
     ppgs_sd.update_traces(marker_line_width=1,marker_line_color="white")
+    ppgs_sd.update_layout(title=dict(text="Std. Dev. Of PPG S-S INTERVALS",))
 
     rhr_ecg = px.scatter(x=peakmeta_df['USER_ID'], y=peakmeta_df['RHR']-peakmeta_df['ECG_HR'])
     rhr_ecg.update_xaxes(visible=False)

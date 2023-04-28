@@ -89,19 +89,51 @@ tab1 = dbc.Tab([
 tab2 = dbc.Tab([
     dbc.Row([ dcc.Graph(id="ecg_peak") ]),
     dbc.Row([ dcc.Graph(id="ppg_peak") ]),
-    dbc.Row([ dbc.Row([], ) ], id='df_rowdata', style={'margin':'5px'}),
+    dbc.Row([ dbc.Row([], ) ], id='df_rowdata', style={'margin':'5px', 'width':'60%'}),
+    dbc.Row([ dbc.Row([], ) ], id='df_rowdata2', style={'margin':'5px', 'width':'60%'}),
+    dbc.Row([ dbc.Row([], ) ], id='df_rowdata3', style={'margin':'5px', 'width':'60%'}),
     dbc.Row([
          dbc.Col([dcc.Graph(id="ecg_sd")], width=4),
          dbc.Col([dcc.Graph(id="ppgf_sd")], width=4),
          dbc.Col([dcc.Graph(id="ppgs_sd")], width=4),
 
          ]),
-     dbc.Row([ dcc.Graph(id="rhr_ecg") ],  style={'margin':'5px'}),
+    #  dbc.Row([ dcc.Graph(id="") ],  style={'margin':'5px'}),
 
     ], label="Peak Detection", style={'padding':'15px'})
 tab3 = dbc.Tab([
-    dbc.Row([]),
-    dcc.Graph(id='chart-3')], label='Features', style={'padding':'15px'})
+    dbc.Row([
+        dcc.Graph(id='rhr_ecg')
+    ], 
+    # style={'margin':'3px'}
+    ),
+    dbc.Row([
+        
+        # dbc.Row([html.Img(src=r'assets/miplot.svg', alt='image')], style={'margin': '5px'}),
+        # dbc.Row([html.Img(src=r'assets/pcorr.svg', alt='image')], style={'margin': '5px'}),
+        dbc.Col([
+            dbc.Card(
+                [
+                    dbc.CardBody(html.P("Pearson Correlation", className="card-text")),
+                    dbc.CardImg(src="assets/pcorr.svg", bottom=True),
+                ],
+                style={"width": "30rem"},
+            ),
+        ], width='auto'),
+        dbc.Col([
+            dbc.Card(
+                [
+                    dbc.CardBody(html.P("Mutual Information", className="card-text")),
+                    dbc.CardImg(src="assets/miplot.svg", bottom=True),
+                ],
+                style={"width": "30rem"},
+            )
+        ], width='auto')
+        
+        
+    ], style={'margin': '5px'})
+    
+    ], label='Features', style={'padding':'15px'})
 #tab3 = dbc.Tab([table], label="Table", className="p-4")
 tabs = dbc.Card(dbc.Tabs([tab1, tab2, tab3]))
 
@@ -241,6 +273,8 @@ app.layout = dbc.Container(
     Output("ppgf_sd", "figure"),
     Output("ppgs_sd", "figure"),
     Output("rhr_ecg", "figure"),
+    Output("df_rowdata2", "children"),
+    Output("df_rowdata3", "children"),
     
 
     Input("indicator", "value"),
@@ -361,7 +395,19 @@ def update_page(indicator):
     )
     )
 
-    df_rowdata = dbc.Table.from_dataframe(peakmeta_df[peakmeta_df['USER_ID']==user].iloc[:,4:-1], 
+    df_rowdata = dbc.Table.from_dataframe(peakmeta_df[peakmeta_df['USER_ID']==user].iloc[:,10:-1], 
+                                          striped=True, 
+                                          bordered=True, hover=True,
+                                          size='md',
+                                          color='secondary')
+                
+    df_rowdata2 = dbc.Table.from_dataframe(peakmeta_df[peakmeta_df['USER_ID']==user][['RHR', 'ECG_HR', 'PPG_F_HR','PPG_S_HR']], 
+                                          striped=True, 
+                                          bordered=True, hover=True,
+                                          size='md',
+                                          color='secondary')
+    
+    df_rowdata3 = dbc.Table.from_dataframe(peakmeta_df[peakmeta_df['USER_ID']==user].iloc[:,4:7], 
                                           striped=True, 
                                           bordered=True, hover=True,
                                           size='md',
@@ -374,12 +420,12 @@ def update_page(indicator):
     ppgs_sd = px.histogram(peakmeta_df, x="PPG_SS_SD", nbins=25)
     ppgs_sd.update_traces(marker_line_width=1,marker_line_color="white")
 
-    rhr_ecg = px.line(x=peakmeta_df['USER_ID'], y=peakmeta_df['RHR']-peakmeta_df['ECG_HR'])
+    rhr_ecg = px.scatter(x=peakmeta_df['USER_ID'], y=peakmeta_df['RHR']-peakmeta_df['ECG_HR'])
     rhr_ecg.update_xaxes(visible=False)
-    rhr_ecg.update_layout(title=dict(text="RHR vs ECG HR",),title_x=0.5,autosize=True, paper_bgcolor='whitesmoke',
-                         showlegend=False,xaxis_title='DIFFERENCE',yaxis_title='VALUE DIFFERENCE')
+    rhr_ecg.update_layout(title=dict(text="DEVIATION FROM REFERENCE HR",),title_x=0.5,autosize=True, paper_bgcolor='whitesmoke',
+                         showlegend=False,xaxis_title='RHR - ECG HR',yaxis_title='RHR - ECG HR')
 
-    return ecg, ecg_filter, ppg, ppg_filter, ecg_wfig, ecg_nfig, ppg_wfig, ppg_nfig, ecg_peak, ppg_peak, sigqual_fig, df_rowdata, ecg_sd, ppgf_sd, ppgs_sd,rhr_ecg
+    return ecg, ecg_filter, ppg, ppg_filter, ecg_wfig, ecg_nfig, ppg_wfig, ppg_nfig, ecg_peak, ppg_peak, sigqual_fig, df_rowdata, ecg_sd, ppgf_sd, ppgs_sd,rhr_ecg, df_rowdata2,df_rowdata3
 #---------------------------------------------------------------
     
 

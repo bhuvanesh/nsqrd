@@ -78,7 +78,7 @@ table_df = dbc.Row([
                         'fontWeight': 'bold'
                     },
                 ))
-                ], style={'margin':'3px'})
+                ], style={'margin':'2px', 'width':'auto'})
 tab1 = dbc.Tab([
     dbc.Row([ dcc.Graph(id="ecg") ]),
     dbc.Row([ dcc.Graph(id="ecg_filter") ]),

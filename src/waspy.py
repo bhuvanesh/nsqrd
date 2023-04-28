@@ -52,16 +52,31 @@ table_df = dbc.Row([
                 page_size=15,
                 style_as_list_view=True,
                 css=[{'selector': 'table', 'rule': 'table-layout: fixed'}],
-                style_header={
-                'backgroundColor': 'gray',
-                'fontWeight': 'bold'
-                    },
+                # style_header={
+                # 'backgroundColor': 'gray',
+                # 'fontWeight': 'bold'
+                #     },
                 style_cell={
                     'width': '{}%'.format(len(meta_df.columns)),
                     'textOverflow': 'ellipsis',
                     'overflow': 'hidden',
                     # 'backgroundColor': 'lightgray',
-                    }
+                    },
+                style_data={
+                        'color': 'black',
+                        'backgroundColor': 'white'
+                    },
+                    style_data_conditional=[
+                        {
+                            'if': {'row_index': 'odd'},
+                            'backgroundColor': 'rgb(220, 220, 220)',
+                        }
+                    ],
+                    style_header={
+                        'backgroundColor': 'rgb(210, 210, 210)',
+                        'color': 'black',
+                        'fontWeight': 'bold'
+                    },
                 ))
                 ], style={'margin':'3px'})
 tab1 = dbc.Tab([
